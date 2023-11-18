@@ -1,22 +1,5 @@
-const slugs = [
-    
-    {
-        "title": "slug mario",
-        "slug": "slug-mario"          
-    },
-    {
-        "title": "slug mario 1",
-        "slug": "slug-mario-1"          
-    },
-    {
-        "title": "slug marione",
-        "slug": "slug-marione"          
-    }
 
-];
-
-
-module.exports =  function (str){
+module.exports =  function (str, array){
 
     if (typeof str !== "string") {
         throw new Error("input must be a string");
@@ -24,30 +7,21 @@ module.exports =  function (str){
         
     let slug = str;
 
-    let i = 1;
+    // to kebab-case
 
-    do {
-        // Generate a new slug by replacing spaces with "-", adding the counter, and converting to lowercase
-        const newSlug = slug.replace(/ /g, "-") + (i > 1 ? `-${i}` : "");
+    let kebabCaseSlug = slug.replace(/ /g, "-");
 
-        // Check if the newly generated slug or modified slug with the counter already exists in the slugs array
-        const slugExists = slugs.some(existingSlug => existingSlug.slug === slug || existingSlug.slug === newSlug);
+    // if true create new unique slug
+    for (let index = 0; index < array.length; index++) {
+        //creo nuovo slug
+        let nuovoSlug = kebabCaseSlug + (index === 0 ?  "" : `-${index}`);  
+        // controllo se il nuovo slug esiste
+        const slugExists = array.some(existingSlug => existingSlug.slug === nuovoSlug);
+        // se si return
+        if (!slugExists) {
+            return (index === 0 ? kebabCaseSlug : nuovoSlug).toLowerCase(); 
+        }
+    }
 
-        // If the slug exists, increment the counter; otherwise, use the current counter value
-        i = slugExists ? i + 1 : i;
-
-        // Update the slug with the modified counter
-        slug = slug.replace(/ /g, "-") + (i > 1 ? `-${i}` : "");
-
-    } while (slugs.some(existingSlug => existingSlug.slug === slug));
-
-    return slug.toLowerCase();
-  
-    // slug.split("").map((char) => {
-    //     if (char === " "){
-    //         return "-";
-    //     }
-    // return char;
-    // }).join("").toLowerCase();
 
 }
